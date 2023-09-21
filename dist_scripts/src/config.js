@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.translate = exports.assetUrl = exports.publicUrl = exports.isMobileViewport = exports.getItemPageNames = exports.setTitle = exports.titleFormat = exports.radarNameShort = exports.radarName = void 0;
-exports.radarName = process.env.REACT_APP_RADAR_NAME || "AOE Technology Radar";
+exports.radarName = process.env.REACT_APP_RADAR_NAME || "Rockfeather Technology Radar";
 exports.radarNameShort = exports.radarName;
-exports.titleFormat = process.env.REACT_APP_RADAR_TITLE_FORMAT || "%TECHNOLOGY_NAME% | %APP_TITLE%";
+exports.titleFormat = process.env.REACT_APP_RADAR_TITLE_FORMAT || "Tool";
 function setTitle(document, title) {
     document.title = title
         ? exports.titleFormat

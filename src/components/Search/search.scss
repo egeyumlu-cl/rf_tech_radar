@@ -11,22 +11,22 @@
     width: 100%;
     box-sizing: border-box;
     padding: 10px 120px 10px 20px;
-    background: #3a444a;
+    background: var(--color-white);
     display: block;
     border: none;
-    color: var(--color-white);
-    font-size: 16px;
+    color: var(--color-gray-dark);
+    font-size: 24px;
     line-height: 1;
     font-family: "DIN";
     font-weight: normal;
 
     &::placeholder {
-      color: var(--color-gray-normal);
+      color: var(--color-gray-dark);
     }
 
     &:focus {
       outline: none;
-      background: #2f393f;
+      background: var(--color-gray-light);
     }
   }
 

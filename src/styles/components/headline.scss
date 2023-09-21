@@ -5,11 +5,11 @@ h4.headline {
 .headline {
   margin: 0;
   padding: 0;
-  color: var(--color-white);
+  color: var(--color-gray-light);
   font-size: 20px;
   font-weight: normal;
 
   &--dark {
-    color: var(--color-gray-light);
+    color: var(--color-gray-dark);
   }
 }

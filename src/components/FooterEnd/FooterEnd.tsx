@@ -2,7 +2,7 @@ import classNames from "classnames";
 import React from "react";
 
 import { useMessages } from "../../context/MessagesContext";
-import SocialLink from "../SocialLink/SocialLink";
+/*import SocialLink from "../SocialLink/SocialLink";*/
 import "./footerend.scss";
 
 interface Props {
@@ -24,7 +24,8 @@ const FooterEnd: React.FC<Props> = ({ modifier }) => {
       })}
     >
       <div className="footer-social">
-        {socialLinks && (
+        {
+        /* socialLinks && (
           <>
             <div className="footer-social__label">
               <p>{socialLinksLabel ?? "Follow us:"}</p>
@@ -35,7 +36,7 @@ const FooterEnd: React.FC<Props> = ({ modifier }) => {
               ))}
             </div>
           </>
-        )}
+              ) */}
       </div>
 
       {legalInformationLink && (
