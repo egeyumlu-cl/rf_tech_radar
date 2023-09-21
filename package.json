@@ -1,12 +1,13 @@
 {
-  "name": "aoe_technology_radar",
+  "name": "rf_technolgy_radar",
   "version": "3.6.0",
-  "description": "AOE Technology Radar",
-  "author": "AOE GmbH <contact-de@aoe.com> (http://www.aoe.com)",
+  "description": "Rockfeather Technology Radar",
+  "author": "Alex and Ege",
+  "comments": "This repo was forked from AOE Technology radar",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AOEpeople/aoe_technology_radar.git"
+    "url": "https://github.com/Rockfeather-Team/rf_tech_radar.git"
   },
   "bin": {
     "aoe_technology_radar-buildRadar": "dist_scripts/scripts/buildRadar.js",
