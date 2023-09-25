@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { Client } from "@notionhq/client";
 import {
   copyFileSync,
   existsSync,
@@ -6,14 +7,16 @@ import {
   readFileSync,
   writeFileSync,
 } from "fs";
+import fs from "fs";
 import { JSDOM } from "jsdom";
+import path from "path";
 import XmlSitemap from "xml-sitemap";
 
 import { publicUrl, setTitle } from "../src/config";
 import { createRadar } from "./generateJson/radar";
-import { Client } from '@notionhq/client';
-import fs from 'fs';
-import path from 'path';
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = "production";
@@ -28,7 +31,7 @@ process.on("unhandledRejection", (err) => {
 
 const createStaticFiles = async () => {
   const items = await fetchData();
-  await generateMarkdownFiles(items, 'radar');
+  await generateMarkdownFiles(items, "radar");
   const radar = await createRadar();
 
   copyFileSync("build/index.html", "build/overview.html");
@@ -97,8 +100,6 @@ const createStaticFiles = async () => {
   writeFileSync("build/sitemap.xml", sitemap.xml);
 };
 
-const notion = new Client({ auth: process.env.NOTION_API_KEY });
-
 interface FileElements {
   name: string;
   link: string | null;
@@ -107,34 +108,38 @@ interface FileElements {
 }
 
 interface TechRadarElement {
-    properties: {
-      Name: {
-        title: [
-          {
-            text: {
-              content: string;
-              link?: string;
-            };
-          }
-        ];
-      };
-      type: {
-        select: {
-          name: string;
-        } | null;
-      };
-      Stage: {
-        status: {
-          name: string;
-        };
+  properties: {
+    Name: {
+      title: [
+        {
+          text: {
+            content: string;
+            link?: string;
+          };
+        }
+      ];
+    };
+    type: {
+      select: {
+        name: string;
+      } | null;
+    };
+    Stage: {
+      status: {
+        name: string;
       };
     };
-  }
+  };
+}
 
 const fetchData = async (): Promise<FileElements[]> => {
+  if (process.env.NOTION_API_KEY === undefined || process.env.DATABASE_ID === undefined) throw new Error("The environment file hasnt been set properly")
+  const notion = new Client({ auth: process.env.NOTION_API_KEY });
   const items: FileElements[] = [];
-  if (process.env.DATABASE_ID === undefined) return []
-  const database = await notion.databases.query({ database_id: process.env.DATABASE_ID });
+
+  const database = await notion.databases.query({
+    database_id: process.env.DATABASE_ID,
+  });
 
   for (const techRadarElement of database.results as any) {
     const isLeft = techRadarElement.properties.Name.title.length === 0;
@@ -147,7 +152,8 @@ const fetchData = async (): Promise<FileElements[]> => {
     const name = techRadarElement.properties.Name.title.at(0).text.content;
     const link = techRadarElement.properties.Name.title.at(0).text.link;
     const stage = techRadarElement.properties.Stage.status.name.toLowerCase();
-    const quadrant = techRadarElement.properties.type.select.name;
+    const quadrant = techRadarElement.properties.type.select.name.replace(/ /g, '-');
+    console.log(quadrant)
 
     const revision = { name, link, ring: stage, quadrant };
     items.push(revision);
@@ -155,7 +161,10 @@ const fetchData = async (): Promise<FileElements[]> => {
   return items;
 };
 
-const generateMarkdownFiles = async (items: FileElements[], outputDirectory: string) => {
+const generateMarkdownFiles = async (
+  items: FileElements[],
+  outputDirectory: string
+) => {
   if (!fs.existsSync(outputDirectory)) {
     fs.mkdirSync(outputDirectory);
   }
@@ -181,9 +190,8 @@ Text goes here. You can use **markdown** here.`;
     console.log(`Saved ${filename} to ${outputPath}`);
   }
 
-  console.log('Markdown files saved successfully.');
+  console.log("Markdown files saved successfully.");
 };
-
 
 createStaticFiles()
   .then(() => {

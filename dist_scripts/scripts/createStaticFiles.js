@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var client_1 = require("@notionhq/client");
+var dotenv_1 = __importDefault(require("dotenv"));
 var fs_1 = require("fs");
 var fs_2 = __importDefault(require("fs"));
 var jsdom_1 = require("jsdom");
@@ -48,6 +49,7 @@ var path_1 = __importDefault(require("path"));
 var xml_sitemap_1 = __importDefault(require("xml-sitemap"));
 var config_1 = require("../src/config");
 var radar_1 = require("./generateJson/radar");
+dotenv_1.default.config();
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = "production";
 process.env.NODE_ENV = "production";
@@ -121,15 +123,16 @@ var createStaticFiles = function () { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-var notion = new client_1.Client({ auth: process.env.NOTION_API_KEY });
 var fetchData = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var items, database, _i, _a, techRadarElement, isLeft, isRight, name_1, link, stage, quadrant, revision;
+    var notion, items, database, _i, _a, techRadarElement, isLeft, isRight, name_1, link, stage, quadrant, revision;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
+                if (process.env.NOTION_API_KEY === undefined ||
+                    process.env.DATABASE_ID === undefined)
+                    throw new Error("The environment file hasnt been set properly");
+                notion = new client_1.Client({ auth: process.env.NOTION_API_KEY });
                 items = [];
-                if (process.env.DATABASE_ID === undefined)
-                    return [2 /*return*/, []];
                 return [4 /*yield*/, notion.databases.query({
                         database_id: process.env.DATABASE_ID,
                     })];
@@ -145,7 +148,8 @@ var fetchData = function () { return __awaiter(void 0, void 0, void 0, function 
                     name_1 = techRadarElement.properties.Name.title.at(0).text.content;
                     link = techRadarElement.properties.Name.title.at(0).text.link;
                     stage = techRadarElement.properties.Stage.status.name.toLowerCase();
-                    quadrant = techRadarElement.properties.type.select.name;
+                    quadrant = techRadarElement.properties.type.select.name.replace(/ /g, "-");
+                    console.log(quadrant);
                     revision = { name: name_1, link: link, ring: stage, quadrant: quadrant };
                     items.push(revision);
                 }

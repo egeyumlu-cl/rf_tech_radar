@@ -2,7 +2,7 @@
   "tags" : ["Data Science", "Data Engineering", "Data Visualization", "Low-code", "Process Mining"],
   "quadrants": {
     "languages-and-frameworks": "Languages and frameworks",
-    "methods-and-patterns": "Methods",
+    "methods": "Methods",
     "platforms-and-aoe-services": "Other services",
     "tools": "Tools"
   },

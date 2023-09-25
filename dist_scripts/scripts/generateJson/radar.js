@@ -103,7 +103,6 @@ var createRadar = function () { return __awaiter(void 0, void 0, void 0, functio
             case 0: return [4 /*yield*/, (0, file_1.getAllMarkdownFiles)((0, file_1.radarPath)())];
             case 1:
                 fileNames = _a.sent();
-                console.log("hi");
                 return [4 /*yield*/, createRevisionsFromFiles(fileNames)];
             case 2:
                 revisions = _a.sent();
@@ -149,7 +148,6 @@ var createRevisionsFromFiles = function (fileNames) {
             var fm = (0, front_matter_1.default)(data);
             var html = (0, marked_1.marked)(fm.body.replace(/\]\(\//g, "](".concat(config_1.publicUrl)));
             html = html.replace(/a href="http/g, 'a target="_blank" rel="noopener noreferrer" href="http');
-            console.log(fm);
             var attributes = checkAttributes(fileName, fm.attributes);
             if (attributes) {
                 return __assign(__assign(__assign({}, itemInfoFromFilename(fileName)), attributes), { fileName: fileName, body: html });
