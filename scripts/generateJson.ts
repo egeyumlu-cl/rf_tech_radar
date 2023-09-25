@@ -15,8 +15,8 @@ process.on("unhandledRejection", (err) => {
   throw err;
 });
 
-fs.removeSync(paths.templateNodeModules);
-fs.ensureSymlinkSync(paths.appNodeModules, paths.templateNodeModules);
+// fs.removeSync(paths.templateNodeModules);
+// fs.ensureSymlinkSync(paths.appNodeModules, paths.templateNodeModules);
 
 try {
   fs.statSync(radarPath());

@@ -16,8 +16,8 @@ process.on("unhandledRejection", (err) => {
   throw err;
 });
 
-fs.removeSync(paths.templateNodeModules);
-fs.ensureSymlinkSync(paths.appNodeModules, paths.templateNodeModules);
+// fs.removeSync(paths.templateNodeModules);
+// fs.ensureSymlinkSync(paths.appNodeModules, paths.templateNodeModules);
 
 const runCommand = (command: string) =>
   new Promise((resolve, reject) => {

@@ -72,8 +72,8 @@ process.env.NODE_ENV = "production";
 process.on("unhandledRejection", function (err) {
     throw err;
 });
-fs.removeSync(paths.templateNodeModules);
-fs.ensureSymlinkSync(paths.appNodeModules, paths.templateNodeModules);
+// fs.removeSync(paths.templateNodeModules);
+// fs.ensureSymlinkSync(paths.appNodeModules, paths.templateNodeModules);
 try {
     fs.statSync((0, file_1.radarPath)());
 }

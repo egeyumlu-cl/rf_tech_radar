@@ -40,8 +40,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var client_1 = require("@notionhq/client");
 var fs_1 = require("fs");
+var fs_2 = __importDefault(require("fs"));
 var jsdom_1 = require("jsdom");
+var path_1 = __importDefault(require("path"));
 var xml_sitemap_1 = __importDefault(require("xml-sitemap"));
 var config_1 = require("../src/config");
 var radar_1 = require("./generateJson/radar");
@@ -55,13 +58,17 @@ process.on("unhandledRejection", function (err) {
     throw err;
 });
 var createStaticFiles = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var radar, rawConf, config, sitemap, sitemapOptions;
+    var items, radar, rawConf, config, sitemap, sitemapOptions;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                console.log("starting static");
-                return [4 /*yield*/, (0, radar_1.createRadar)()];
+            case 0: return [4 /*yield*/, fetchData()];
             case 1:
+                items = _a.sent();
+                return [4 /*yield*/, generateMarkdownFiles(items, "radar")];
+            case 2:
+                _a.sent();
+                return [4 /*yield*/, (0, radar_1.createRadar)()];
+            case 3:
                 radar = _a.sent();
                 (0, fs_1.copyFileSync)("build/index.html", "build/overview.html");
                 (0, fs_1.copyFileSync)("build/index.html", "build/help-and-about-tech-radar.html");
@@ -112,6 +119,57 @@ var createStaticFiles = function () { return __awaiter(void 0, void 0, void 0, f
                 (0, fs_1.writeFileSync)("build/sitemap.xml", sitemap.xml);
                 return [2 /*return*/];
         }
+    });
+}); };
+var notion = new client_1.Client({ auth: process.env.NOTION_API_KEY });
+var fetchData = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var items, database, _i, _a, techRadarElement, isLeft, isRight, name_1, link, stage, quadrant, revision;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                items = [];
+                if (process.env.DATABASE_ID === undefined)
+                    return [2 /*return*/, []];
+                return [4 /*yield*/, notion.databases.query({
+                        database_id: process.env.DATABASE_ID,
+                    })];
+            case 1:
+                database = _b.sent();
+                for (_i = 0, _a = database.results; _i < _a.length; _i++) {
+                    techRadarElement = _a[_i];
+                    isLeft = techRadarElement.properties.Name.title.length === 0;
+                    isRight = techRadarElement.properties.type.select === null ||
+                        techRadarElement.properties.type.select.length === 0;
+                    if (isLeft || isRight)
+                        continue;
+                    name_1 = techRadarElement.properties.Name.title.at(0).text.content;
+                    link = techRadarElement.properties.Name.title.at(0).text.link;
+                    stage = techRadarElement.properties.Stage.status.name.toLowerCase();
+                    quadrant = techRadarElement.properties.type.select.name;
+                    revision = { name: name_1, link: link, ring: stage, quadrant: quadrant };
+                    items.push(revision);
+                }
+                return [2 /*return*/, items];
+        }
+    });
+}); };
+var generateMarkdownFiles = function (items, outputDirectory) { return __awaiter(void 0, void 0, void 0, function () {
+    var _i, items_1, item, markdownContent, filename, outputPath;
+    return __generator(this, function (_a) {
+        if (!fs_2.default.existsSync(outputDirectory)) {
+            fs_2.default.mkdirSync(outputDirectory);
+        }
+        for (_i = 0, items_1 = items; _i < items_1.length; _i++) {
+            item = items_1[_i];
+            markdownContent = "---\ntitle: \"".concat(item.name, "\"\nring: \"").concat(item.ring, "\"\nquadrant: \"").concat(item.quadrant, "\"\n---\n    \nText goes here. You can use **markdown** here.");
+            filename = "".concat(item.name, ".md");
+            outputPath = path_1.default.join(outputDirectory, filename);
+            // Write the Markdown content to the file
+            fs_2.default.writeFileSync(outputPath, markdownContent);
+            console.log("Saved ".concat(filename, " to ").concat(outputPath));
+        }
+        console.log("Markdown files saved successfully.");
+        return [2 /*return*/];
     });
 }); };
 createStaticFiles()
