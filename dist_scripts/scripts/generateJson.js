@@ -91,6 +91,7 @@ var generateJson = function () { return __awaiter(void 0, void 0, void 0, functi
                 return [4 /*yield*/, createRadar()];
             case 1:
                 radar = _a.sent();
+                console.log(radar);
                 return [4 /*yield*/, save(JSON.stringify(radar), paths.radarJson)];
             case 2:
                 _a.sent();

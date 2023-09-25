@@ -103,9 +103,11 @@ var createRadar = function () { return __awaiter(void 0, void 0, void 0, functio
             case 0: return [4 /*yield*/, (0, file_1.getAllMarkdownFiles)((0, file_1.radarPath)())];
             case 1:
                 fileNames = _a.sent();
+                console.log(fileNames);
                 return [4 /*yield*/, createRevisionsFromFiles(fileNames)];
             case 2:
                 revisions = _a.sent();
+                console.log(revisions);
                 filterdRevisions = revisions.filter(function (r) { return r !== undefined; });
                 allReleases = getAllReleases(filterdRevisions);
                 items = createItems(filterdRevisions);
@@ -129,18 +131,7 @@ var checkAttributes = function (fileName, attributes) {
     if (!quadrants.includes(attributes.quadrant)) {
         throw new Error("Error: ".concat(fileName, " has an illegal value for 'quadrant' - must be one of ").concat(quadrants));
     }
-    if (config.tags) {
-        for (var _i = 0, _a = config.tags; _i < _a.length; _i++) {
-            var tag = _a[_i];
-            if (attributes.tags && attributes.tags.includes(tag)) {
-                return attributes;
-            }
-        }
-        return undefined;
-    }
-    else {
-        return attributes;
-    }
+    return attributes;
 };
 var createRevisionsFromFiles = function (fileNames) {
     return Promise.all(fileNames.map(function (fileName) {
@@ -148,7 +139,9 @@ var createRevisionsFromFiles = function (fileNames) {
             var fm = (0, front_matter_1.default)(data);
             var html = (0, marked_1.marked)(fm.body.replace(/\]\(\//g, "](".concat(config_1.publicUrl)));
             html = html.replace(/a href="http/g, 'a target="_blank" rel="noopener noreferrer" href="http');
+            console.log(fm);
             var attributes = checkAttributes(fileName, fm.attributes);
+            console.log(attributes);
             if (attributes) {
                 return __assign(__assign(__assign({}, itemInfoFromFilename(fileName)), attributes), { fileName: fileName, body: html });
             }

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { Client } from "@notionhq/client";
+import dotenv from "dotenv";
 import {
   copyFileSync,
   existsSync,
@@ -14,9 +15,8 @@ import XmlSitemap from "xml-sitemap";
 
 import { publicUrl, setTitle } from "../src/config";
 import { createRadar } from "./generateJson/radar";
-import dotenv from 'dotenv'
 
-dotenv.config()
+dotenv.config();
 
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = "production";
@@ -133,7 +133,11 @@ interface TechRadarElement {
 }
 
 const fetchData = async (): Promise<FileElements[]> => {
-  if (process.env.NOTION_API_KEY === undefined || process.env.DATABASE_ID === undefined) throw new Error("The environment file hasnt been set properly")
+  if (
+    process.env.NOTION_API_KEY === undefined ||
+    process.env.DATABASE_ID === undefined
+  )
+    throw new Error("The environment file hasnt been set properly");
   const notion = new Client({ auth: process.env.NOTION_API_KEY });
   const items: FileElements[] = [];
 
@@ -152,8 +156,11 @@ const fetchData = async (): Promise<FileElements[]> => {
     const name = techRadarElement.properties.Name.title.at(0).text.content;
     const link = techRadarElement.properties.Name.title.at(0).text.link;
     const stage = techRadarElement.properties.Stage.status.name.toLowerCase();
-    const quadrant = techRadarElement.properties.type.select.name.replace(/ /g, '-');
-    console.log(quadrant)
+    const quadrant = techRadarElement.properties.type.select.name.replace(
+      / /g,
+      "-"
+    );
+    console.log(quadrant);
 
     const revision = { name, link, ring: stage, quadrant };
     items.push(revision);
